@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/Editor/megalock.uss?fileID=7433441132597879392&amp;guid=c99aecc24ede6ff4aae9b2b58c7b1cf0&amp;type=3#megalock"/>
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:TabView name="main-tab-view" style="flex-grow: 1;">
+            <ui:Tab label="View Locks" name="tab-locks-all" style="justify-content: flex-start; align-items: stretch;"/>
+            <ui:Tab label="Add Lock" name="tab-add-lock"/>
+            <ui:Tab label="Unlock" name="tab-remove-lock"/>
+            <ui:Tab label="Admin" name="admin" enabled="true" closeable="false"/>
+        </ui:TabView>
+    </ui:VisualElement>
+</ui:UXML>

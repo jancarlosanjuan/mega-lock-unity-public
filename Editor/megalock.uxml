@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/Editor/megalock.uss?fileID=7433441132597879392&amp;guid=c99aecc24ede6ff4aae9b2b58c7b1cf0&amp;type=3#megalock"/>
+    <ui:TextField label="Slack ID" placeholder-text="enter slack ID" name="slackid"/>
+    <ui:TextField label="Password" placeholder-text="enter Password" name="password"/>
+    <ui:Button text="Login" name="login" view-data-key=""/>
+    <ui:VisualElement name="Space" style="flex-grow: 1; height: 50px;"/>
+    <ui:Label text="Don&apos;t have an account?" style="position: relative; right: auto; left: auto; align-self: center;"/>
+    <ui:Button text="Register" name="register"/>
+</ui:UXML>

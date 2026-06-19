@@ -1,0 +1,23 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="locks-all-template-container" enabled="true" style="flex-grow: 1; display: flex; visibility: visible;">
+        <ui:VisualElement template="locks-all">
+            <ui:VisualElement name="topbar" style="flex-grow: 1; flex-direction: row-reverse;">
+                <ui:Button text="Refresh" name="refresh-button"/>
+                <uie:ToolbarSearchField name="searchbar" style="display: flex; visibility: visible;">
+                    <ui:Button text="Search Name"/>
+                </uie:ToolbarSearchField>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:MultiColumnListView columns="" sort-column-descriptions="" name="locks-list" sorting-mode="Default" binding-source-selection-mode="AutoAssign" horizontal-scrolling="true" enabled="true" data-source-path="" style="align-items: stretch; align-self: auto; justify-content: flex-start; visibility: visible; display: flex;">
+            <Bindings>
+                <ui:DataBinding property="name" binding-mode="ToTarget"/>
+                <ui:Columns>
+                    <ui:Column name="id" title="id" stretchable="true" resizable="true" binding-path="id"/>
+                    <ui:Column/>
+                </ui:Columns>
+            </Bindings>
+            <ui:Columns resize-preview="false"/>
+            <ui:SortColumnDescriptions/>
+        </ui:MultiColumnListView>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,19 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="add-locks-root" style="flex-grow: 1; width: auto; height: auto; flex-basis: auto; min-width: auto; min-height: auto; background-color: rgba(0, 0, 0, 0);">
+        <ui:VisualElement name="panel-root" style="flex-grow: 1; flex-direction: row;">
+            <ui:VisualElement name="staging-root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39); width: 50%; margin-left: 0; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; min-width: auto; height: auto; max-width: none; min-height: auto; flex-shrink: 1; flex-basis: auto;">
+                <ui:ListView name="staging-list-view" horizontal-scrolling="true" header-title="Staging" style="max-height: none; min-height: auto; height: 75%; width: auto; -unity-font-style: bold; padding-bottom: 20px; -unity-text-align: middle-left;"/>
+                <ui:VisualElement name="lock-root" style="flex-grow: 1; max-height: none; height: auto; background-color: rgba(195, 180, 12, 0); min-width: auto; min-height: 120px; flex-basis: auto; padding-left: 0; padding-bottom: 30px; padding-right: 0; padding-top: 0; flex-shrink: 1;">
+                    <ui:TextField label="" placeholder-text="Lock Description" hide-placeholder-on-focus="true" is-delayed="false" readonly="false" vertical-scroller-visibility="Auto" auto-correction="true" multiline="true" name="lock-description-field" style="flex-direction: column; flex-shrink: 1; flex-grow: 1; min-height: auto;"/>
+                    <ui:Button text="Lock" name="lock-button" icon-image="project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=4456449167576933126&amp;guid=3f8fe3c6ad3677f4db52a3f61ee5025f&amp;type=3#console.erroricon" style="flex-shrink: 0; flex-grow: 0; flex-basis: auto;"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="locks-list" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39); width: 50%;">
+                <ui:VisualElement style="flex-grow: 0; max-height: none; flex-direction: row-reverse; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px;">
+                    <ui:Button text="Refresh" name="refresh-button"/>
+                </ui:VisualElement>
+                <ui:ListView name="locks-list-view" horizontal-scrolling="true" header-title="My Locks" tooltip="" focusable="false" show-border="false" show-alternating-row-backgrounds="None" show-foldout-header="false" show-add-remove-footer="false" enabled="false" style="padding-right: 5px; padding-left: 5px; background-color: rgba(0, 0, 0, 0); max-height: none; -unity-font-style: bold; -unity-text-align: middle-left;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

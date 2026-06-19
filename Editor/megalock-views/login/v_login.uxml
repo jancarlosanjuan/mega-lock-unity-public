@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:Template name="v_loading" src="project://database/Assets/Editor/megalock-views/loading/v_loading.uxml?fileID=9197481963319205126&amp;guid=51aa67cb471ff3340b158845d46d4a36&amp;type=3#v_loading"/>
+    <Style src="project://database/Assets/Editor/megalock.uss?fileID=7433441132597879392&amp;guid=c99aecc24ede6ff4aae9b2b58c7b1cf0&amp;type=3#megalock"/>
+    <ui:VisualElement name="background" enabled="true" tabindex="0" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.74); background-image: url(&quot;project://database/Assets/Editor/megalock-assets/mcs-bg.png?fileID=2800000&amp;guid=a1e53f8b14906d24c811f926d1635156&amp;type=3#mcs-bg&quot;); -unity-background-scale-mode: scale-and-crop; -unity-slice-left: 1; -unity-slice-top: 1; -unity-slice-right: 1; -unity-slice-bottom: 1; min-width: auto; min-height: auto; opacity: 0.26; position: absolute; flex-basis: auto; width: 100%; height: 100%; flex-direction: column; align-items: auto; justify-content: center; display: flex; visibility: visible; overflow: hidden;"/>
+    <ui:VisualElement enabled="true" name="root" focusable="false" usage-hints="None" picking-mode="Position" tabindex="0" style="flex-grow: 1; margin-right: 0; margin-left: 0; opacity: 1; display: flex; visibility: visible; overflow: visible; background-color: rgba(0, 0, 0, 0); flex-direction: column; align-items: stretch; align-content: auto; align-self: center; height: 100%; width: 100%; justify-content: flex-start; margin-top: 0; margin-bottom: 0; padding-top: 26px; padding-right: 26px; padding-bottom: 26px; padding-left: 26px; flex-basis: auto;">
+        <ui:TextField label="Slack ID" placeholder-text="enter slack ID" name="slackid" style="margin-top: 20px;"/>
+        <ui:TextField label="Password" placeholder-text="enter Password" name="password" password="true" style="margin-top: 5px; margin-bottom: 5px;"/>
+        <ui:Button text="Login" name="login" view-data-key=""/>
+        <ui:VisualElement name="Space" style="flex-grow: 1; height: 50px;"/>
+        <ui:Label text="Don&apos;t have an account?" style="position: relative; right: auto; left: auto; align-self: center;"/>
+        <ui:Button text="Register" name="register-button" style="margin-bottom: 30px; flex-grow: 0;"/>
+    </ui:VisualElement>
+    <ui:Instance template="v_loading" enabled="true" name="TemplateContainer" style="position: absolute; width: 100%; height: 100%; rotate: 0; justify-content: flex-start; align-items: auto; background-color: rgba(0, 0, 0, 0.52); display: none; visibility: hidden;"/>
+</ui:UXML>

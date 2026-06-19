@@ -1,0 +1,262 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Plastic.Newtonsoft.Json;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UIElements.Button;
+using Object = UnityEngine.Object;
+
+namespace MegaLock
+{
+    public class view_add_locks : BaseView
+    {
+        private TextField textField;
+        
+        protected override void BuildUI()
+        {
+            RefreshStagingList();
+            RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks);
+            RootViewInstance.style.flexGrow = 1;
+            RootViewInstance.style.width = new StyleLength(Length.Percent(100));
+            RootViewInstance.style.height = new StyleLength(Length.Percent(100));
+            
+            var refreshButton = RootViewInstance.Q<Button>("refresh-button");
+            if (refreshButton != null)
+            {
+                refreshButton.clicked += HandleRefreshClicked;
+            }
+            
+            var lockButton = RootViewInstance.Q<Button>("lock-button");
+            if (lockButton != null)
+            {
+                lockButton.clicked += HandleLockButtonClicked;
+            }
+            
+            textField = RootViewInstance.Q<TextField>("lock-description-field");
+        }
+
+        public void RefreshStagingList()
+        {
+            var items = MegalockPersistence.instance.selectedObjects;
+            
+            Func<VisualElement> makeItem = () => new Label();
+            
+            
+            var listView = RootViewInstance.Q<ListView>("staging-list-view");
+            
+            var callbackCache = new Dictionary<VisualElement, EventCallback<PointerDownEvent>>();
+            
+            Action<VisualElement, int> bindItem = (e, i) =>
+            {
+                Label label = (Label)e;
+                label.text = MegalockUtilities.HighlightAssetNameFromPath(AssetDatabase.GetAssetPath(items[i]));
+                
+                //Unregister previous callback to prevent piling up the callback
+                if (callbackCache.TryGetValue(label, out var old))
+                    label.UnregisterCallback<PointerDownEvent>(old);
+
+                EventCallback<PointerDownEvent> callback = evt =>
+                {
+                    if (evt.button == 1)
+                    {
+                        evt.StopPropagation();
+                        ShowContextMenu(evt.position, i, items, listView);
+                    }
+                };
+
+                callbackCache[label] = callback;
+                label.RegisterCallback<PointerDownEvent>(callback);
+            };
+
+            listView.makeItem = makeItem;
+            listView.bindItem = bindItem;
+            listView.itemsSource = items;
+            listView.selectionType = SelectionType.Multiple;
+            
+            //handle cleaning up because it keeps piling up when UIToolkit reuses the pool element
+            listView.unbindItem = (e, i) =>
+            {
+                Label label = (Label)e;
+                if (callbackCache.TryGetValue(label, out var old))
+                {
+                    label.UnregisterCallback<PointerDownEvent>(old);
+                    callbackCache.Remove(label);
+                }
+            };
+            
+            //Copy pasta-ed from UIToolkit samples lol
+            /*listView.itemsChosen += (selectedItems) =>
+            {
+                Debug.Log("Items chosen:   " + string.Join(", ", selectedItems));
+            };
+
+            listView.selectedIndicesChanged += (selectedIndices) =>
+            {
+                Debug.Log("Index selected: " + string.Join(", ", selectedIndices));
+
+                // Note: selectedIndices can also be used to get the selected items from the itemsSource directly or
+                // by using listView.viewController.GetItemForIndex(index).
+            };*/
+            
+            //handleRefreshClicked();
+        }
+
+        public void RefreshCurrentUserLocksList(List<LockData> userLocks)
+        {
+            var listView = RootViewInstance.Q<ListView>("locks-list-view");
+            if (listView == null) return;
+            
+            Func<VisualElement> makeItem = () => new Label();
+            Action<VisualElement, int> bindItem = (e, i) =>
+            {
+                Label label = (Label)e;
+                if (userLocks == null || userLocks.Count == 0 || i >= userLocks.Count) 
+                    return; 
+                label.text = MegalockUtilities.HighlightAssetNameFromPath(userLocks[i].path);
+            };
+            
+            listView.makeItem = makeItem;
+            listView.bindItem = bindItem;
+            listView.itemsSource = userLocks;
+            listView.selectionType = SelectionType.None;
+            listView.dataSource = MegalockPersistence.instance;
+            
+            /*listView.itemsChosen += (selectedItems) =>
+            {
+                Debug.Log("Items chosen:   " + string.Join(", ", selectedItems));
+            };
+
+            listView.selectedIndicesChanged += (selectedIndices) =>
+            {
+                Debug.Log("Index selected: " + string.Join(", ", selectedIndices));
+            };*/
+
+        }
+        
+        private void ShowContextMenu(Vector2 position, int index, List<Object> objects, ListView listView)
+        {
+            var menu = new GenericDropdownMenu();
+
+            menu.AddItem("Delete", false, () =>
+            {
+                var selections = listView.selectedIndices.OrderByDescending(i => i);
+                foreach (var i in selections)
+                    objects.RemoveAt(i);
+                listView.Rebuild();
+                listView.selectedIndex = -1;
+            });
+
+            menu.DropDown(new Rect(position, Vector2.zero), listView, DropdownMenuSizeMode.Auto);
+        }
+        
+        private void HandleRefreshClicked()
+        {
+            ViewManager.TryRunCoroutine(MegalockAPIController.CallFetchUserLocksApi(MegalockPersistence.instance.currentUserSession,
+                    (res, json) =>
+                {
+                    if (res)
+                    {
+                        var rows = JsonConvert.DeserializeObject<List<LockData>>(json);
+                        MegalockPersistence.instance.SaveUserLocks(rows);
+                        return;
+                    }
+                    //Debug.LogError("Failed to fetch locks");
+                }),
+                (r) =>
+                {
+                    RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks);
+                    //Debug.Log("Finished fetching locks");
+                });
+        }
+
+        private void HandleLockButtonClicked()
+        {
+            if (textField == null) return;
+            string description = textField.text;
+            
+            if (MegalockPersistence.instance.selectedObjects.Count == 0)
+            {
+                EditorUtility.DisplayDialog(
+                    "Add Lock Error",                                 
+                    "Lock list is empty.", 
+                    "OK"                                              
+                );
+                return;
+            }
+            
+            if (string.IsNullOrEmpty(description))
+            {
+                EditorUtility.DisplayDialog(
+                    "Add Lock Error",                                 
+                    "Description cannot be empty.", 
+                    "OK"                                              
+                );
+                return;
+            }
+            
+            AddLockDataList addLockDataList = new AddLockDataList(){locks = new List<AddLockData>()};
+            foreach (var entry in MegalockPersistence.instance.selectedObjects)
+            {
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(entry, out var guid, out _);
+                Guid guidStr = Guid.Parse(guid);
+                string guidCleaned = guidStr.ToString("D");
+                if (string.IsNullOrEmpty(guid))
+                {
+                    Debug.LogError("Could not find GUID of selected asset");
+                    continue;
+                }
+                var data = new AddLockData
+                {
+                    path = AssetDatabase.GetAssetPath(entry),
+                    description = description,
+                    guid = guidCleaned,
+                };
+                
+                addLockDataList.locks.Add(data);
+            }
+
+            ViewManager.TryRunCoroutine(MegalockAPIController.CallAddLocksApi(
+                    addLockDataList,
+                    MegalockPersistence.instance.currentUserSession
+                    ,(res, json) =>
+                {
+                    if (res)
+                    {
+                        var rows = JsonConvert.DeserializeObject<List<AddLockData>>(json);
+                        //Check for diffs in the current selection. Those that were returned were successful so we remove it from the selections.
+                        for (int i = MegalockPersistence.instance.selectedObjects.Count - 1; i >= 0; i--)
+                        {
+                            var selectionGuid =
+                                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                                    MegalockPersistence.instance.selectedObjects[i], out var guid, out _);
+                            if (!selectionGuid) continue;
+
+                            if (rows.Exists(x => x.guid.Replace("-","") == guid))
+                            {
+                                MegalockPersistence.instance.selectedObjects.RemoveAt(i);
+                            }
+                        }
+                        
+                        textField.value = "";
+                    }
+                    //Debug.LogError("Failed to fetch locks");
+                }),
+                (r) =>
+                {
+                    RefreshStagingList();
+                    HandleRefreshClicked();
+                    //RefreshCurrentUserLocksList(MegalockPersistence.instance.locks);
+                    //Debug.Log("Finished inserting locks");
+                });
+        }
+        
+        public override void OnShow()
+        {
+            base.OnShow();
+            //HandleRefreshClicked();
+            MegalockPersistence.instance.currentTabView = this;
+        }
+    }
+}

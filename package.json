@@ -1,0 +1,17 @@
+{
+    "name": "com.mcs.megalock",
+    "displayName": "Megalock",
+    "version": "1.0.0",
+    "unity": "2023.2",
+    "description": "Unity package to support server based file locking management",
+    "keywords": [
+      "File locking",
+      "asset management",
+      "tools"
+    ],
+    "author": {
+      "name": "Jan Carlo San Juan",
+      "email": "jc@megacatstudios.com",
+      "url": "https://www.linkedin.com/in/jancarlosanjuan"
+    }
+  }
