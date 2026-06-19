@@ -13,5 +13,8 @@
       "name": "Jan Carlo San Juan",
       "email": "jc@megacatstudios.com",
       "url": "https://www.linkedin.com/in/jancarlosanjuan"
-    }
+    },
+  "dependencies": {
+    "com.unity.editorcoroutines": "1.0.1"
   }
+}
