@@ -171,7 +171,13 @@ namespace MegaLock
                 listView.selectedIndex = -1;
             });
 
-            menu.DropDown(new Rect(position, Vector2.zero), listView, DropdownMenuSizeMode.Auto);
+            menu.DropDown(new Rect(position, Vector2.zero), listView, 
+#if UNITY_6000_4_OR_NEWER
+                DropdownMenuSizeMode.Auto
+#else
+                false
+#endif
+            );
         }
         
         private void ShowLockListContextMenu(Vector2 position, int index, List<LockData> objects, MultiColumnListView listView)
@@ -195,7 +201,13 @@ namespace MegaLock
                 listView.selectedIndex = -1;
             });
 
-            menu.DropDown(new Rect(position, Vector2.zero), listView, DropdownMenuSizeMode.Auto);
+            menu.DropDown(new Rect(position, Vector2.zero), listView,
+#if UNITY_6000_4_OR_NEWER
+            DropdownMenuSizeMode.Auto
+#else
+            false
+#endif
+            );
         }
         
         private void HandleRefreshClicked()
