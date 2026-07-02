@@ -18,26 +18,62 @@ namespace MegaLock
     {
         private TextField textField;
         private List<LockData> selectedLocks = new List<LockData>();
-        
+        private Button refresh_button = null;
+        private Button search_button = null;
+        private Button clear_button = null;
+        private ToolbarSearchField pathInputField = null;
         protected override void BuildUI()
         {
-            RefreshStagingList();
-            RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks);
             RootViewInstance.style.flexGrow = 1;
             RootViewInstance.style.width = new StyleLength(Length.Percent(100));
             RootViewInstance.style.height = new StyleLength(Length.Percent(100));
             
-            var refreshButton = RootViewInstance.Q<Button>("refresh-button");
-            if (refreshButton != null)
+            refresh_button = RootViewInstance.Q<Button>("refresh-button");
+            if (refresh_button != null)
             {
-                refreshButton.clicked += HandleRefreshClicked;
+                refresh_button.clicked += HandleRefreshClicked;
             }
+            
+            search_button = RootViewInstance.Q<Button>("search-button");
+            if (search_button != null)
+            {
+                search_button.clicked += HandleSearchClicked;
+            }
+            
+            clear_button = RootViewInstance.Q<Button>("clear-button");
+            if (clear_button != null)
+            {
+                clear_button.clicked += HandleClearButtonClicked;
+            }
+            
+            pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
+            if (pathInputField == null)
+            {
+                Debug.LogWarning("No path field selected");
+                return;
+            }
+            pathInputField.value = MegalockPersistence.instance.userLocksSearchField;
             
             var unlockButton = RootViewInstance.Q<Button>("unlock-button");
             if (unlockButton != null)
             {
                 unlockButton.clicked += HandleUnlockButtonClicked;
             }
+            
+            RefreshStagingList();
+            RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks);
+        }
+
+        private void HandleClearButtonClicked()
+        {
+            pathInputField.value = String.Empty;
+            HandleSearchClicked();
+        }
+
+        private void HandleSearchClicked()
+        {
+            MegalockPersistence.instance.UpdateUserLockSearchStates(pathInputField.value);
+            RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks);
         }
 
         public void RefreshStagingList()
@@ -134,7 +170,7 @@ namespace MegaLock
                     callbackCache.Remove(label);
                 }
             };
-
+            listView.Rebuild();
         }
         
         private void ShowStagingContextMenu(Vector2 position, int index, List<LockData> objects, ListView listView)
@@ -193,19 +229,19 @@ namespace MegaLock
         
         private void HandleRefreshClicked()
         {
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallFetchUserLocksApi(MegalockPersistence.instance.currentUserSession, 
+            ViewManager.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession, 
                     (res, json) =>
                 {
                     if (res)
                     {
                         var rows = JsonConvert.DeserializeObject<List<LockData>>(json);
-                        MegalockPersistence.instance.SaveUserLocks(rows);
+                        MegalockPersistence.instance.SaveAll(rows);
                         return;
                     }
                 }),
                 (r) =>
                 {
-                    RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks);
+                    RefreshCurrentUserLocksList(MegalockPersistence.instance.user_locks.OrderByDescending(entry => entry.path).ToList());
                 });
         }
 
@@ -255,6 +291,7 @@ namespace MegaLock
         {
             base.OnShow();
             MegalockPersistence.instance.currentTabView = this;
+            pathInputField.value = MegalockPersistence.instance.userLocksSearchField;
         }
     }
 }

@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="topbar" style="flex-grow: 1; flex-direction: row-reverse;">
+        <ui:Button text="Refresh" name="refresh-button"/>
+        <ui:Button text="Clear" name="clear-button" icon-image=""/>
+        <ui:Button text="Search" name="search-button"/>
+        <uie:ToolbarSearchField name="searchbar-description" placeholder-text="Description" style="display: flex; visibility: visible; flex-shrink: 1; flex-grow: 0;"/>
+        <uie:ToolbarSearchField name="searchbar-owner" placeholder-text="Owner Name" style="display: flex; visibility: visible; flex-shrink: 1; flex-grow: 0;"/>
+        <uie:ToolbarSearchField name="searchbar-path" placeholder-text="Asset Path/Name" style="display: flex; visibility: visible; flex-shrink: 1; flex-grow: 0;"/>
+    </ui:VisualElement>
+</ui:UXML>

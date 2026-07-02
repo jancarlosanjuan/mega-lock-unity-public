@@ -1,12 +1,8 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:Template name="t_search" src="project://database/Assets/Packages/com.mcs.megalock/Editor/megalock-templates/t_search.uxml?fileID=9197481963319205126&amp;guid=9b9816e9f3db89949987fddd1817e2cc&amp;type=3#t_search"/>
     <ui:VisualElement name="locks-all-template-container" enabled="true" style="flex-grow: 1; display: flex; visibility: visible;">
         <ui:VisualElement template="locks-all">
-            <ui:VisualElement name="topbar" style="flex-grow: 1; flex-direction: row-reverse;">
-                <ui:Button text="Refresh" name="refresh-button"/>
-                <uie:ToolbarSearchField name="searchbar" style="display: flex; visibility: visible;">
-                    <ui:Button text="Search Name"/>
-                </uie:ToolbarSearchField>
-            </ui:VisualElement>
+            <ui:Instance template="t_search" name="t_search"/>
         </ui:VisualElement>
         <ui:MultiColumnListView columns="" sort-column-descriptions="" name="locks-list" sorting-mode="Default" binding-source-selection-mode="AutoAssign" horizontal-scrolling="true" enabled="true" data-source-path="" style="align-items: stretch; align-self: auto; justify-content: flex-start; visibility: visible; display: flex;">
             <Bindings>

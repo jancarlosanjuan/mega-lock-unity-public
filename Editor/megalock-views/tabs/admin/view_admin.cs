@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Text = UnityEngine.UIElements.TextElement;
@@ -14,6 +15,14 @@ namespace MegaLock
         private TextField textField;
         private List<LockData> selectedLocks = new List<LockData>();
         private MultiColumnListView multiColumnListView = null;
+        
+        private Button refresh_button = null;
+        private Button search_button = null;
+        private Button clear_button = null;
+        private ToolbarSearchField pathInputField = null;
+        private ToolbarSearchField ownerInputField = null;
+        private ToolbarSearchField descriptionInputField = null;
+        
         [SerializeField] private VisualTreeAsset cellTemplate = null;
         protected override void BuildUI()
         {
@@ -23,11 +32,47 @@ namespace MegaLock
             RootViewInstance.style.width = new StyleLength(Length.Percent(100));
             RootViewInstance.style.height = new StyleLength(Length.Percent(100));
             
-            var refreshButton = RootViewInstance.Q<Button>("refresh-button");
-            if (refreshButton != null)
+            refresh_button = RootViewInstance.Q<Button>("refresh-button");
+            if (refresh_button != null)
             {
-                refreshButton.clicked += HandleRefreshClicked;
+                refresh_button.clicked += HandleRefreshClicked;
             }
+            
+            search_button = RootViewInstance.Q<Button>("search-button");
+            if (search_button != null)
+            {
+                search_button.clicked += HandleSearchClicked;
+            }
+            
+            clear_button = RootViewInstance.Q<Button>("clear-button");
+            if (clear_button != null)
+            {
+                clear_button.clicked += HandleClearButtonClicked;
+            }
+            
+            pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
+            if (pathInputField == null)
+            {
+                Debug.LogWarning("No path field selected");
+                return;
+            }
+            pathInputField.value = MegalockPersistence.instance.searchFields.assetPath;
+            
+            ownerInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-owner");
+            if (ownerInputField == null)
+            {
+                Debug.LogWarning("No owner field selected");
+                return;
+            }
+            ownerInputField.value = MegalockPersistence.instance.searchFields.ownerName;
+            
+            descriptionInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-description");
+            if (descriptionInputField == null)
+            {
+                Debug.LogWarning("No description field selected");
+                return;
+            }
+            descriptionInputField.value = MegalockPersistence.instance.searchFields.description;
             
             var unlockButton = RootViewInstance.Q<Button>("unlock-button");
             if (unlockButton != null)
@@ -36,7 +81,27 @@ namespace MegaLock
             }
             
             RefreshStagingList();
-            RefreshProjectLockList(MegalockPersistence.instance.locks);
+            RefreshProjectLockList(MegalockPersistence.instance.project_locks);
+        }
+
+        private void HandleClearButtonClicked()
+        {
+            pathInputField.value = String.Empty;
+            descriptionInputField.value = String.Empty;
+            ownerInputField.value = String.Empty;
+            
+            HandleSearchClicked();
+        }
+
+        private void HandleSearchClicked()
+        {
+            MegalockPersistence.instance.UpdateProjectLockSearchStates(new SearchFields()
+            {
+                assetPath = pathInputField.value,
+                description = descriptionInputField.value,
+                ownerName = ownerInputField.value
+            });
+            multiColumnListView.Rebuild();
         }
 
         public void RefreshStagingList()
@@ -219,13 +284,14 @@ namespace MegaLock
                     {
                         var rows = JsonConvert.DeserializeObject<List<LockData>>(json);
                         MegalockPersistence.instance.SaveAll(rows);
+                        HandleSearchClicked();
                         return;
                     }
                     //Debug.LogError("Failed to fetch locks");
                 }),
                 (r) =>
                 {
-                    RefreshProjectLockList(MegalockPersistence.instance.locks);
+                    RefreshProjectLockList(MegalockPersistence.instance.project_locks);
                     //Debug.Log("Finished fetching locks");
                 });
         }
@@ -277,6 +343,9 @@ namespace MegaLock
         {
             base.OnShow();
             MegalockPersistence.instance.currentTabView = this;
+            pathInputField.value = MegalockPersistence.instance.searchFields.assetPath;
+            descriptionInputField.value = MegalockPersistence.instance.searchFields.description;
+            ownerInputField.value = MegalockPersistence.instance.searchFields.ownerName;
         }
     }
 }

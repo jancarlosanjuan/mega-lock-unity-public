@@ -41,46 +41,132 @@ namespace MegaLock
             }
         }
     }
+
+    [Serializable]
+    public struct SearchFields
+    {
+        public string assetPath;
+        public string ownerName;
+        public string description;
+    }
     
     [FilePath("./locks.asset", FilePathAttribute.Location.ProjectFolder), Serializable]
     public class MegalockPersistence : ScriptableSingleton<MegalockPersistence>
     {
-       [SerializeField] public List<LockData> locks;
-       [SerializeField] public List<LockData> user_locks; //I separated user_locks to mimic database indexing
+       [SerializeField] private List<LockData> _locks;
+       [SerializeField] public List<LockData> _userLocks;
+       
+       //Use this field to query using the search fields.
+       [SerializeField] public List<LockData> project_locks;
+       [SerializeField] public List<LockData> user_locks;
+       [SerializeField] public SerializableDictionary<string, LockData> locksGuidHash; //This is used in the asset highlighter. We take up more storage, but we save so much linq operations in return
        
        //FIELDS THAT DO NOT NEED TO BE SAVED. WE ONLY NEED THESE DURING THE DURATION OF THE EDITOR SESSION
        //Megalock TAB states to hold and initialize after domain reloads. Different usage from ViewManager. This one is Tab specific
        [SerializeField] public BaseView currentTabView;
        //Handling User session persistence
        [SerializeField] public UserSession currentUserSession;
-       //Handle disallowed paths from MegalockFileWatcher
-       [SerializeField] public List<string> assetPathsFromFileWatcher;
        
        public DateTime lastFetchedAt;
        
+       //Fields to keep in every tab. We just read from here so all the fields remain the same
+       public SearchFields searchFields; //this might look weird but we need it to keep track of the search states per tab
+       public string userLocksSearchField;
+       
         public List<LockData> SaveAll(List<LockData> rows)
         {
-            locks = rows;
+            _locks.Clear();
+            _locks.AddRange(rows);
+            locksGuidHash.Clear();
+            _userLocks.Clear();
+            foreach (LockData row in rows)
+            {
+                locksGuidHash.Add(row.guid.SanitizePostgresUuidToUnityGuid(), row);
+                if(row.user_id == currentUserSession.userId)
+                    _userLocks.Add(row);
+            }
+            UpdateProjectLockSearchStates(this.searchFields, false);
+            UpdateUserLockSearchStates(this.userLocksSearchField, false);
             lastFetchedAt = DateTime.UtcNow;
-            Save(true);
-            return locks;
-            
-        }
-
-        public List<LockData> SaveUserLocks(List<LockData> rows)
-        {
-            user_locks = rows;
-            Save(true);
-            return user_locks;
-        }
-
-        public void ClearAll()
-        {
-            locks.Clear();
-            Save(true);
+            instance.Save(true);
+            EditorApplication.RepaintProjectWindow();
+            return _locks;
         }
         
-        public bool HasData => locks?.Count > 0;
+        [Obsolete("Use SaveAll(List<LockData> rows) instead.")]
+        public List<LockData> SaveUserLocks(List<LockData> rows)
+        {
+            _userLocks.Clear();
+            _userLocks.AddRange(rows);
+            instance.Save(true);
+            EditorApplication.RepaintProjectWindow();
+            return _userLocks;
+        }
+
+        public List<LockData> UpdateProjectLockSearchStates(SearchFields searchFields, bool callSave = true)
+        {
+            this.searchFields = searchFields;
+            project_locks.Clear();
+            project_locks.AddRange(
+                _locks.Select(
+                    r => new
+                    {
+                        Row = r,
+                        pathScore = MegalockUtilities.MatchAssetPath(searchFields.assetPath, r.path),
+                        ownerScore = MegalockUtilities.MatchContains(searchFields.ownerName, r.name),
+                        descriptionScore = MegalockUtilities.MatchContains(searchFields.description, r.description)
+                    }).Where(
+                        e =>
+                            e.pathScore > 0 &&
+                            e.ownerScore > 0 &&
+                            e.descriptionScore > 0
+                    ).OrderByDescending(
+                    s=>s.pathScore + s.ownerScore + s.descriptionScore
+                    ).Select(
+                     v => v.Row
+                    ).ToList()
+                );
+
+            if (callSave)
+            {
+                instance.Save(true);
+                EditorApplication.RepaintProjectWindow();
+            }
+            return project_locks;
+        }
+        
+        public List<LockData> UpdateUserLockSearchStates(string searchText, bool callSave = true)
+        {
+            this.userLocksSearchField = searchText;
+            user_locks.Clear();
+            user_locks.AddRange(
+                _userLocks.Select(
+                    r => new
+                    {
+                        Row = r,
+                        pathScore = MegalockUtilities.MatchAssetPath(searchText, r.path),
+                    }).Where(
+                    e =>
+                        e.pathScore > 0
+                ).OrderByDescending(
+                    s=>s.pathScore
+                ).Select(
+                    v => v.Row
+                ).ToList()
+            );
+            if (callSave)
+            {
+                instance.Save(true);
+                EditorApplication.RepaintProjectWindow();
+            }
+            return user_locks;
+        }
+        
+        public void ClearAll()
+        {
+            _locks.Clear();
+            Save(true);
+        }
         
         //Handling Selections. We don't need to save this. It already survives between domain reloads.
         [SerializeField] public List<Object> selectedObjects;
@@ -170,8 +256,10 @@ namespace MegaLock
         
         public static bool IsCurrentlyLockedBySomeoneElse(string guid)
         {
-            return MegalockPersistence.instance.locks.Any(e => e.guid.SanitizePostgresUuidToUnityGuid() == guid.SanitizePostgresUuidToUnityGuid() &&
-                                                               e.user_id != MegalockPersistence.instance.currentUserSession.userId);
+            if (!MegalockPersistence.instance.locksGuidHash.TryGetValue(guid.SanitizePostgresUuidToUnityGuid(),
+                    out var data))
+                return false;
+            return data.user_id != MegalockPersistence.instance.currentUserSession.userId;
         }
     }
 

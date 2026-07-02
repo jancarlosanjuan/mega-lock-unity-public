@@ -1,4 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="t_search" src="project://database/Assets/Packages/com.mcs.megalock/Editor/megalock-templates/t_search.uxml?fileID=9197481963319205126&amp;guid=9b9816e9f3db89949987fddd1817e2cc&amp;type=3#t_search"/>
     <ui:VisualElement name="add-locks-root" style="flex-grow: 1; width: auto; height: auto; flex-basis: auto; min-width: auto; min-height: auto; background-color: rgba(0, 0, 0, 0);">
         <ui:VisualElement name="panel-root" style="flex-grow: 1; flex-direction: row;">
             <ui:VisualElement name="staging-root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39); width: 50%; margin-left: 0; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; min-width: auto; height: auto; max-width: none; min-height: auto; flex-shrink: 1; flex-basis: auto;">
@@ -9,7 +10,7 @@
             </ui:VisualElement>
             <ui:VisualElement name="locks-list" focusable="true" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39); width: 50%;">
                 <ui:VisualElement style="flex-grow: 0; max-height: none; flex-direction: row-reverse; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px;">
-                    <ui:Button text="Refresh" name="refresh-button"/>
+                    <ui:Instance template="t_search"/>
                 </ui:VisualElement>
                 <ui:MultiColumnListView columns="" sort-column-descriptions="" name="locks-list-view" allow-remove="false" allow-add="false" show-bound-collection-size="false" focusable="false"/>
             </ui:VisualElement>

@@ -1,5 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="t_search_path" src="project://database/Assets/Packages/com.mcs.megalock/Editor/megalock-templates/t_search_path.uxml?fileID=9197481963319205126&amp;guid=64dacef16a7d1144eb1df9aa7512ca0f&amp;type=3#t_search_path"/>
     <ui:VisualElement name="add-locks-root" style="flex-grow: 1; width: auto; height: auto; flex-basis: auto; min-width: auto; min-height: auto; background-color: rgba(0, 0, 0, 0);">
+        <ui:Instance template="t_search_path"/>
         <ui:VisualElement name="panel-root" style="flex-grow: 1; flex-direction: row;">
             <ui:VisualElement name="staging-root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39); width: 50%; margin-left: 0; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; min-width: auto; height: auto; max-width: none; min-height: auto; flex-shrink: 1; flex-basis: auto;">
                 <ui:ListView name="staging-list-view" horizontal-scrolling="true" header-title="Staging" style="max-height: none; min-height: auto; height: 75%; width: auto; -unity-font-style: bold; padding-bottom: 20px; -unity-text-align: middle-left;"/>
@@ -9,9 +11,6 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="locks-list" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39); width: 50%;">
-                <ui:VisualElement style="flex-grow: 0; max-height: none; flex-direction: row-reverse; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px;">
-                    <ui:Button text="Refresh" name="refresh-button"/>
-                </ui:VisualElement>
                 <ui:ListView name="locks-list-view" horizontal-scrolling="true" header-title="My Locks" tooltip="" focusable="false" show-border="false" show-alternating-row-backgrounds="None" show-foldout-header="false" show-add-remove-footer="false" enabled="false" style="padding-right: 5px; padding-left: 5px; background-color: rgba(0, 0, 0, 0); max-height: none; -unity-font-style: bold; -unity-text-align: middle-left;"/>
             </ui:VisualElement>
         </ui:VisualElement>
