@@ -346,6 +346,7 @@ namespace MegaLock
             pathInputField.value = MegalockPersistence.instance.searchFields.assetPath;
             descriptionInputField.value = MegalockPersistence.instance.searchFields.description;
             ownerInputField.value = MegalockPersistence.instance.searchFields.ownerName;
+            RefreshProjectLockList(MegalockPersistence.instance.project_locks);
         }
     }
 }

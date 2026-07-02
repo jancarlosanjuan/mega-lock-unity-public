@@ -292,6 +292,7 @@ namespace MegaLock
             base.OnShow();
             MegalockPersistence.instance.currentTabView = this;
             pathInputField.value = MegalockPersistence.instance.userLocksSearchField;
+            HandleSearchClicked();
         }
     }
 }
