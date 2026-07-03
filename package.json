@@ -1,7 +1,7 @@
 {
     "name": "com.mcs.megalock",
     "displayName": "Megalock",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2023.2",
     "description": "Unity package to support server based file locking management",
     "keywords": [
