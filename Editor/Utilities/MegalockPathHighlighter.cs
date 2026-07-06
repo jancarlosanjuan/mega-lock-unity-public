@@ -16,6 +16,7 @@ namespace MegaLock
         {
             var locks =
                 MegalockPersistence.instance.locksGuidHash;
+            if(locks == null) return;
             string currentUserID = MegalockPersistence.instance.currentUserSession.userId;
             if(!locks.TryGetValue(guid, out var lockData)) return;
             
