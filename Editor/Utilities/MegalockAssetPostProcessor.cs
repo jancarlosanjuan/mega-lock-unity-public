@@ -16,7 +16,8 @@ namespace MegaLock
         {
             if (!UserSessionController.IsSessionValid())
             {
-                EditorUtility.DisplayDialog("Warning!", "Megalock session is inactive. Login to receive latest updates", "OK");
+                //EditorUtility.DisplayDialog("Warning!", "Megalock session is inactive. Login to receive latest updates", "OK");
+                Debug.LogWarning("Megalock session is inactive. Login to receive latest updates");
                 return;
             }
             
