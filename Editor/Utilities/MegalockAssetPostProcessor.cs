@@ -14,6 +14,8 @@ namespace MegaLock
             string[] movedAssets, 
             string[] movedFromAssetPaths)
         {
+            if(BuildPipeline.isBuildingPlayer) return;
+            
             if (!UserSessionController.IsSessionValid())
             {
                 //EditorUtility.DisplayDialog("Warning!", "Megalock session is inactive. Login to receive latest updates", "OK");

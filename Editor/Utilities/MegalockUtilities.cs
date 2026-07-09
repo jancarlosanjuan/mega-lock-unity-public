@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Object = UnityEngine.Object;
 
 namespace MegaLock
 {
@@ -21,6 +22,18 @@ namespace MegaLock
             if (obj == null) return false;
             string path = AssetDatabase.GetAssetPath(obj);
             return AssetDatabase.IsValidFolder(path);
+        }
+        
+        public static string GetCleanGuidOfObject(Object entry)
+        {
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(entry, out var guid, out _);
+            Guid guidStr = Guid.Parse(guid);
+            return guidStr.ToString("D");
+        }
+        
+        public static string SanitizeObjectToUnityGuid(Object entry)
+        {
+            return GetCleanGuidOfObject(entry).Replace("-", "");
         }
 
         public static string SanitizePostgresUuidToUnityGuid(this string guid)

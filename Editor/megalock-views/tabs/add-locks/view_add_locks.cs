@@ -245,10 +245,8 @@ namespace MegaLock
             AddLockDataList addLockDataList = new AddLockDataList(){locks = new List<AddLockData>()};
             foreach (var entry in MegalockPersistence.instance.selectedObjects)
             {
-                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(entry, out var guid, out _);
-                Guid guidStr = Guid.Parse(guid);
-                string guidCleaned = guidStr.ToString("D");
-                if (string.IsNullOrEmpty(guid))
+                string guidCleaned = MegalockUtilities.GetCleanGuidOfObject(entry);
+                if (string.IsNullOrEmpty(guidCleaned))
                 {
                     Debug.LogError("Could not find GUID of selected asset");
                     continue;
