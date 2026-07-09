@@ -42,7 +42,7 @@ public static class MegalockInfoInspectorHeaderGUI
         if (!AssetDatabase.Contains(currentSelectedObject))
             return false;
 
-        var path = AssetDatabase.GetAssetPath(currentSelectedObject.GetEntityId());
+        var path = AssetDatabase.GetAssetPath(currentSelectedObject);
         if (path == String.Empty)
             return false;
         
