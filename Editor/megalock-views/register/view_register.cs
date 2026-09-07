@@ -48,7 +48,7 @@ namespace MegaLock
         
         private void HandleRegisterClicked()
         {
-            if (!ViewManager.CanRunCoroutine) return;
+            if (!megalock_runner.CanRunCoroutine) return;
         
             string userid = slackIdInputField.value;
             string password = passwordInputField.value;
@@ -65,7 +65,7 @@ namespace MegaLock
                 password = password,
             };
             bool registerSuccessful = false;
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallRegisterApi(registerData, (res,json) =>
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallRegisterApi(registerData, (res,json) =>
             {
                 registerSuccessful = res;
             }),(result) =>

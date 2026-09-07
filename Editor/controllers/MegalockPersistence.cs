@@ -8,6 +8,7 @@ using Unity.Properties;
 using Object = UnityEngine.Object;
 using System.Linq;
 using Newtonsoft.Json;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor.Rendering;
 using UnityEngine.UIElements;
 using UnityEngine.Windows;
@@ -170,7 +171,7 @@ namespace MegaLock
         
         //Handling Selections. We don't need to save this. It already survives between domain reloads.
         [SerializeField] public List<Object> selectedObjects;
-
+        
         [MenuItem("Assets/Add Selections To Lock Staging")]
         public static void AddSelectionsToLockStaging()
         {
@@ -203,6 +204,10 @@ namespace MegaLock
 
                 if(mainView.tabViews.TryGetValue(typeof(view_add_locks), out var view) ? (view_add_locks)view : null)
                     ((view_add_locks)view)?.RefreshStagingList();
+                if (view)
+                {
+                    mainView.GetMainTabView.selectedTabIndex = 1;
+                }
             }
             else
             {
@@ -219,34 +224,35 @@ namespace MegaLock
         public void RefreshAllLocks(Action callback)
         {
             TimeSpan diff = lastFetchedAt - DateTime.UtcNow;
-            if (Math.Abs(diff.TotalSeconds) < 15)
+            if (Math.Abs(diff.TotalSeconds) < 15) //so we don't spam fetches
             {
                 callback?.Invoke();
                 return;
             }
                 
-            var megaLockWindow = EditorWindow.GetWindow<megalock>("Mega Lock");
-            if (megaLockWindow != null)
+            //var megaLockWindow = EditorWindow.GetWindow<megalock>("Mega Lock", false);
+            /*if (ViewManagerInstance == null)
             {
-                megaLockWindow.GetViewManager()?.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession,
-                        (res, json) =>
+                Debug.LogError("Cannot find View manager");
+                return;
+            }*/
+            
+            /*megaLockWindow.GetViewManager()?*/
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession,
+                (res, json) =>
+                {
+                    if (res)
                     {
-                        if (res)
-                        {
-                            var rows = JsonConvert.DeserializeObject<List<LockData>>(json);
-                            SaveAll(rows);
-                            return;
-                        }
-                    }),
-                    (r) =>
-                    {
-                        callback?.Invoke();
-                    });
-            }
-            else
-            {
-                
-            }
+                        var rows = JsonConvert.DeserializeObject<List<LockData>>(json);
+                        SaveAll(rows);
+                        return;
+                    }
+                }),
+                (r) =>
+                {
+                    callback?.Invoke();
+                });
+            
         }
         public void SetCurrentUseSession(UserSession userSession)
         {

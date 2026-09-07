@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
 using Object = UnityEngine.Object;
-
+using MegaNotify;
 namespace MegaLock
 {
     public class view_add_locks : BaseView
@@ -45,7 +45,8 @@ namespace MegaLock
             pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
             if (pathInputField == null)
             {
-                Debug.LogWarning("No path field selected");
+                MegaNotifySystem.CreateNotification("Search error", "No path field selected");
+                //Debug.LogWarning("No path field selected");
                 return;
             }
             pathInputField.value = MegalockPersistence.instance.userLocksSearchField;
@@ -199,7 +200,7 @@ namespace MegaLock
         
         private void HandleRefreshClicked()
         {
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession,
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession,
                     (res, json) =>
                 {
                     if (res)
@@ -261,7 +262,7 @@ namespace MegaLock
                 addLockDataList.locks.Add(data);
             }
 
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallAddLocksApi(
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallAddLocksApi(
                     addLockDataList,
                     MegalockPersistence.instance.currentUserSession
                     ,(res, json) =>

@@ -17,6 +17,7 @@ namespace MegaLock
     public class view_main : BaseView
     {
         private TabView mainTabView;
+        public TabView GetMainTabView => mainTabView;
         //Tab mapping
         public Dictionary<Tab, BaseView> tabMapping = new Dictionary<Tab, BaseView>();
         //Tab Instances

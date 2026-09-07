@@ -51,7 +51,7 @@ public static class MegalockInfoInspectorHeaderGUI
 
     static void RenderInfo()
     {
-        EditorGUIUtility.LookLikeInspector();
+        //EditorGUIUtility.LookLikeInspector();
         
         GUIStyle textStyle = GUI.skin.label;
         bool previousWordWrap = textStyle.wordWrap;
@@ -59,7 +59,7 @@ public static class MegalockInfoInspectorHeaderGUI
         textStyle.wordWrap = true;
         textStyle.richText = true;
         
-        bool isLocked = !lockData.path.Equals(String.Empty);
+        bool isLocked = !lockData.path?.Equals(String.Empty) ?? false;
         
         GUILayout.Label($"Megalock File Status: {(isLocked ? "<color=#FF0000>Locked</color>" : "<color=#00FF00>Free</color>")}", textStyle);
         if (isLocked)

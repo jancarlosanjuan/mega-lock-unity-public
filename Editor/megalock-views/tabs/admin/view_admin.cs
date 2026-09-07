@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MegaNotify;
 using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -53,7 +54,8 @@ namespace MegaLock
             pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
             if (pathInputField == null)
             {
-                Debug.LogWarning("No path field selected");
+                MegaNotifySystem.CreateNotification("Search error", "No path field selected");
+                //Debug.LogWarning("No path field selected");
                 return;
             }
             pathInputField.value = MegalockPersistence.instance.searchFields.assetPath;
@@ -61,7 +63,8 @@ namespace MegaLock
             ownerInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-owner");
             if (ownerInputField == null)
             {
-                Debug.LogWarning("No owner field selected");
+                MegaNotifySystem.CreateNotification("Search error", "No owner field selected");
+                //Debug.LogWarning("No owner field selected");
                 return;
             }
             ownerInputField.value = MegalockPersistence.instance.searchFields.ownerName;
@@ -69,7 +72,8 @@ namespace MegaLock
             descriptionInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-description");
             if (descriptionInputField == null)
             {
-                Debug.LogWarning("No description field selected");
+                MegaNotifySystem.CreateNotification("Search error", "No description field selected");
+                //Debug.LogWarning("No description field selected");
                 return;
             }
             descriptionInputField.value = MegalockPersistence.instance.searchFields.description;
@@ -277,7 +281,7 @@ namespace MegaLock
         
         private void HandleRefreshClicked()
         {
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession, 
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallFetchLocksApi(MegalockPersistence.instance.currentUserSession, 
                     (res, json) =>
                 {
                     if (res)
@@ -320,7 +324,7 @@ namespace MegaLock
                 deleteLockDataList.guids.Add(entry.guid);
             }
             
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallAdminDeleteLocksApi(
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallAdminDeleteLocksApi(
                     deleteLockDataList,
                     MegalockPersistence.instance.currentUserSession
                     ,(res, json) =>

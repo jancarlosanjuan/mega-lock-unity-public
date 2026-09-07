@@ -15,13 +15,12 @@ namespace MegaLock
         private readonly VisualElement rootContainer;
         private readonly Dictionary<Type, BaseView> viewTable = new();
         private BaseView currentView;
-        private EditorCoroutine runningCoroutine = null;
-        public bool CanRunCoroutine => runningCoroutine == null;
         
         public ViewManager(VisualElement root, view_loading loadingInstance)
         {
             rootContainer = root;
             this.loadingInstance = loadingInstance?.Initialize(this) as view_loading;
+            megalock_runner.viewManagerInstance = this;
         }
 
         public void OnEditorUpdate(float delta)
@@ -67,13 +66,13 @@ namespace MegaLock
         public T GetView<T>() where T : BaseView =>
             viewTable.TryGetValue(typeof(T), out var view) ? (T)view : null;
         
-        private void ShowLoading()
+        public void ShowLoading()
         {
             rootContainer.Add(loadingInstance.GetRootViewInstance());
             loadingInstance?.OnShow();
         }
 
-        private void HideLoading()
+        public void HideLoading()
         {
             rootContainer.Remove(loadingInstance.GetRootViewInstance());
             loadingInstance?.OnHide();
@@ -81,60 +80,15 @@ namespace MegaLock
 
         public void DeinitializeAllViews()
         {
-            if (runningCoroutine != null)
+            /*if (runningCoroutine != null)
                 EditorCoroutineUtility.StopCoroutine(runningCoroutine);
-            runningCoroutine = null;
+            runningCoroutine = null;*/
             foreach (var entry in viewTable.Values)
             {
                 entry.Deinitialize();
             }
             loadingInstance.Deinitialize();
-        }
-        
-        private IEnumerator CoroutineWrapper(IEnumerator job, Action<bool> onComplete)//Just a wrapper so Action is imposed in all use cases and we dont forget to clear the running routine.
-        {
-            ShowLoading();
-            bool success = true;
-            while (true)
-            {
-                object current;
-                try
-                {
-                    if (!job.MoveNext()) break;
-                    current = job.Current;
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Coroutine failed: {e.Message}");
-                    success = false;
-                    break;
-                }
-                yield return current;
-            }
-
-            runningCoroutine = null;
-            HideLoading();
-            onComplete?.Invoke(success); 
-        }
-        public bool TryRunCoroutine(IEnumerator job, Action<bool> onComplete)
-        {
-            if (runningCoroutine != null)
-            {
-                Debug.LogWarning("ViewManager is busy, ignoring request.");
-                return false;
-            }
-
-            runningCoroutine = EditorCoroutineUtility.StartCoroutineOwnerless(
-                CoroutineWrapper(job, onComplete)
-            );
-            return true;
-        }
-        public void CancelCurrentRunningCoroutine()
-        {
-            if (runningCoroutine == null) return;
-            EditorCoroutineUtility.StopCoroutine(runningCoroutine);
-            runningCoroutine = null;
-            HideLoading();
+            megalock_runner.viewManagerInstance = null;
         }
     }
 }

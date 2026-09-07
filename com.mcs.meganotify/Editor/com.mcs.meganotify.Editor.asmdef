@@ -1,10 +1,7 @@
 {
-    "name": "com.mcs.megalock",
+    "name": "com.mcs.meganotify",
     "rootNamespace": "",
-    "references": [
-        "Unity.EditorCoroutines.Editor",
-        "com.mcs.meganotify"
-    ],
+    "references": [],
     "includePlatforms": [
         "Editor"
     ],

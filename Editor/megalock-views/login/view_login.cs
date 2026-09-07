@@ -51,7 +51,7 @@ namespace MegaLock
         
         private void HandleLoginClicked()
         {
-            if (!ViewManager.CanRunCoroutine) return;
+            if (!megalock_runner.CanRunCoroutine) return;
 
             if (!DoPreSignInValidation()) return;
         
@@ -72,7 +72,7 @@ namespace MegaLock
             };
             bool loginSuccessful = false;
             string jsonBody = string.Empty;
-            ViewManager.TryRunCoroutine(MegalockAPIController.CallLoginApi(loginData, (res,json) =>
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallLoginApi(loginData, (res,json) =>
             {
                 loginSuccessful = res;
                 jsonBody = json;
