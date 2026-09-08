@@ -179,6 +179,7 @@ namespace MegaLock
 
             if (selections == null || selections.Length == 0) return;
 
+            instance.selectedObjects ??= new List<Object>();
             var existingSet = new HashSet<Object>(instance.selectedObjects);
 
             foreach (var obj in selections)
