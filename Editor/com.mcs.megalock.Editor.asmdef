@@ -2,8 +2,7 @@
     "name": "com.mcs.megalock",
     "rootNamespace": "",
     "references": [
-        "Unity.EditorCoroutines.Editor",
-        "com.mcs.meganotify"
+        "Unity.EditorCoroutines.Editor"
     ],
     "includePlatforms": [
         "Editor"

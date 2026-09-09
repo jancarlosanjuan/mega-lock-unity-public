@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MegaNotify;
+//using MegaNotify;
 using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -50,7 +50,7 @@ namespace MegaLock
             pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
             if (pathInputField == null)
             {
-                MegaNotifySystem.CreateNotification("Search error", "No path field selected");
+                //MegaNotifySystem.CreateNotification("Search error", "No path field selected");
                 //Debug.LogWarning("No path field selected");
                 return;
             }

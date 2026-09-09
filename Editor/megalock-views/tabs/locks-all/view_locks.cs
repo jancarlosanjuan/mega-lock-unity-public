@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using MegaNotify;
+//using MegaNotify;
 using Unity.Plastic.Newtonsoft.Json;
 using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEditor;
@@ -51,7 +51,7 @@ namespace MegaLock
             pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
             if (pathInputField == null)
             {
-                MegaNotifySystem.CreateNotification("Search error", "No path field selected");
+                //MegaNotifySystem.CreateNotification("Search error", "No path field selected");
                 //Debug.LogWarning("No path field selected");
                 return;
             }
@@ -60,7 +60,7 @@ namespace MegaLock
             ownerInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-owner");
             if (ownerInputField == null)
             {
-                MegaNotifySystem.CreateNotification("Search error", "No owner field selected");
+                //MegaNotifySystem.CreateNotification("Search error", "No owner field selected");
                 //Debug.LogWarning("No owner field selected");
                 return;
             }
@@ -69,7 +69,7 @@ namespace MegaLock
             descriptionInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-description");
             if (descriptionInputField == null)
             {
-                MegaNotifySystem.CreateNotification("Search error", "No description field selected");
+                //MegaNotifySystem.CreateNotification("Search error", "No description field selected");
                 //Debug.LogWarning("No description field selected");
                 return;
             }

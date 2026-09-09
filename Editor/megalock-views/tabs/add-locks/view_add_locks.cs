@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
 using Object = UnityEngine.Object;
-using MegaNotify;
+//using MegaNotify;
 namespace MegaLock
 {
     public class view_add_locks : BaseView
@@ -45,7 +45,7 @@ namespace MegaLock
             pathInputField = RootViewInstance.Q<ToolbarSearchField>("searchbar-path");
             if (pathInputField == null)
             {
-                MegaNotifySystem.CreateNotification("Search error", "No path field selected");
+                //MegaNotifySystem.CreateNotification("Search error", "No path field selected");
                 //Debug.LogWarning("No path field selected");
                 return;
             }

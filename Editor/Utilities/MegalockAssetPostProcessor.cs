@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MegaNotify;
+//using MegaNotify;
 
 namespace MegaLock
 {
@@ -20,11 +20,11 @@ namespace MegaLock
             if (!UserSessionController.IsSessionValid())
             {
                 //EditorUtility.DisplayDialog("Warning!", "Megalock session is inactive. Login to receive latest updates", "OK");
-                MegaNotifySystem.CreateNotification("Megalock session is inactive!", "Click here to open the Login window.",
+                /*MegaNotifySystem.CreateNotification("Megalock session is inactive!", "Click here to open the Login window.",
                     () =>
                     {
                         EditorWindow.GetWindow<megalock>("Mega Lock");
-                    });
+                    });*/
                 //Debug.LogWarning("Megalock session is inactive. Login to receive latest updates");
                 return;
             }
