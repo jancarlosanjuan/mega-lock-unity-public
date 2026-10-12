@@ -49,7 +49,16 @@ namespace MegaLock
 
         public static IEnumerator CallValidateSessionToken(UserSession userSession, Action<bool, string> callback)
         {
-            string url = API_ROOT_URL + "/user/" + userSession.userId;
+            /*
+             * {
+	            "userInfo": {
+		            "id": "U03B1FVSNG1",
+		            "name": "JC"
+	            },
+	            "isAdmin": true
+            }
+             */
+            string url = API_ROOT_URL + "/user/" + userSession.userId + "/project/" + userSession.projectid;
             using (UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET))
             {
                 request.downloadHandler = new DownloadHandlerBuffer();
@@ -60,16 +69,16 @@ namespace MegaLock
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"Fetch locks failed: {request.error}");
+                    Debug.LogError($"Token validation failed: {request.error}");
                 }
                 else
                 {
                     //Debug.Log($"Response Code: {request.responseCode}");
                 }
-
                 callback?.Invoke(request.result == UnityWebRequest.Result.Success, request.downloadHandler?.text);
             }
         }
+        
         public static IEnumerator CallLoginApi(LoginData loginData, Action<bool,string> callback)
         {
             //Debug.Log("Logging in");

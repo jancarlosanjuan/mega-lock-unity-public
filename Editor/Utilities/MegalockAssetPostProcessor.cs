@@ -25,7 +25,7 @@ namespace MegaLock
                     {
                         EditorWindow.GetWindow<megalock>("Mega Lock");
                     });*/
-                //Debug.LogWarning("Megalock session is inactive. Login to receive latest updates");
+                Debug.LogWarning("Megalock session is inactive. Login to receive latest updates");
                 return;
             }
             

@@ -14,6 +14,12 @@ namespace MegaLock
         }
         private static void HandleProjectTabHighlightItem(string guid, Rect selectionrect)
         {
+            if (!UserSessionController.IsSessionValid())
+            {
+                //No warning message. It will spam the logs lol
+                return;
+            }
+            
             var locks =
                 MegalockPersistence.instance.locksGuidHash;
             if(locks == null) return;

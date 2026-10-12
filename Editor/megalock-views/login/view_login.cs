@@ -47,6 +47,47 @@ namespace MegaLock
                       ViewManager.ShowView<view_register>();
                   };
               }
+
+        }
+        
+        //Use any existing credentials (if any) in the local directory. We also validate if the JWT is valid here so the user does not have to login everytime the open Unity
+        //This one was the most requested since every user has to grab their slack ID every time. Now, the JWT is valid for 30 days. Cats who have left the studio will also have only 30 days to access the locks
+        [InitializeOnLoadMethod]
+        private static void DoAutoLogin()
+        {
+            if (SessionState.GetBool(megalock.SESSION_STATE_LOGIN_KEY, false)) return;
+            
+            if (!UserSessionController.TryParseLocalCredentials(out UserSession session))
+                return;
+            
+            bool loginSuccessful = false;
+            string jsonBody = string.Empty;
+            megalock_runner.TryRunCoroutine(MegalockAPIController.CallValidateSessionToken(session, (res,json) =>
+            {
+                loginSuccessful = res;
+                jsonBody = json;
+            }),(result) =>
+            {
+                if (result && loginSuccessful)
+                {
+                    var obj = JObject.Parse(jsonBody);
+                    session.isAdmin =  (bool)obj["isAdmin"];//Update admin info just in case it changed
+                    UserSessionController.CreateOrUpdateUserSessionData(session);
+                    SessionState.SetBool(megalock.SESSION_STATE_LOGIN_KEY, true);
+                    if (EditorWindow.HasOpenInstances<megalock>())
+                    {
+                        var window = EditorWindow.GetWindow<megalock>();
+                        var mainView = window?.GetViewManager()?.GetView<view_main>() as view_main;
+                        if(mainView != null)
+                            mainView.RefreshAdminTabView();
+                        window?.GetViewManager()?.ShowView<view_main>();
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"Failed to login: {result}. Try Manually logging in");
+                }
+            });
         }
         
         private void HandleLoginClicked()
@@ -55,6 +96,11 @@ namespace MegaLock
 
             if (!DoPreSignInValidation()) return;
         
+            DoManualLogin();
+        }
+        
+        private void DoManualLogin()
+        {
             string userid = slackIdInputField.value;
             string password = passwordInputField.value;
 
@@ -105,7 +151,7 @@ namespace MegaLock
                 }
             });
         }
-
+        
         private bool DoPreSignInValidation()
         {
             string projectPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../"));
@@ -127,6 +173,7 @@ namespace MegaLock
             }
             return true;
         }
+
     }
 }
 

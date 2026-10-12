@@ -40,7 +40,7 @@ namespace MegaLock
             viewManager.RegisterView(CreateInstance<view_register>().Initialize(viewManager) as view_register);
             viewManager.RegisterView(CreateInstance<view_main>().Initialize(viewManager) as view_main);
 
-            bool isLoggedIn = SessionState.GetBool(SESSION_STATE_LOGIN_KEY, false);
+            bool isLoggedIn = UserSessionController.IsSessionValid();//SessionState.GetBool(SESSION_STATE_LOGIN_KEY, false);
             if (isLoggedIn)
             {
                 viewManager.ShowView<view_main>();

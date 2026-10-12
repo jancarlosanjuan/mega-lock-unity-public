@@ -76,6 +76,15 @@ namespace MegaLock
                 tabMapping.Add(tab_admin, tab_admin_instance);
             }
             
+            var tab_user = RootViewInstance.Q<Tab>("user");
+            var tab_user_instance = CreateInstance<view_user>().Initialize(ViewManager) as view_user;
+            if (tab_user_instance)
+            {
+                tab_user.Add(tab_user_instance.GetRootViewInstance());
+                tabViews.Add(typeof(view_user), tab_user_instance);
+                tabMapping.Add(tab_user, tab_user_instance);
+            }
+            
             RefreshAdminTabView();
             
             if (MegalockPersistence.instance.currentTabView != null)
@@ -107,6 +116,10 @@ namespace MegaLock
             var tab_admin = RootViewInstance.Q<Tab>("admin");
             tab_admin.SetEnabled(MegalockPersistence.instance.currentUserSession.isAdmin);
         }
-        
+
+        public override void OnShow()
+        {
+            RefreshAdminTabView();
+        }
     }
 }
